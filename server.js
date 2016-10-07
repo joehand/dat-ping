@@ -47,7 +47,7 @@ PingServer.prototype.start = function (key) {
         outData.entries = entries.length
         debug('Sending results for', datKey.toString('hex'))
         stream.write(JSON.stringify(outData))
-        stream.end()
+        return done()
       })
 
       function done () {
