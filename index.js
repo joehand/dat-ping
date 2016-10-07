@@ -1,7 +1,6 @@
 var events = require('events')
 var util = require('util')
 var network = require('peer-network')()
-var pump = require('pump')
 var encoding = require('dat-encoding')
 var debug = require('debug')('dat-ping')
 
@@ -20,9 +19,7 @@ DatPing.prototype.ping = function (key, cb) {
   if (!cb) cb = function (err) { err && self.emit('error', err) }
   if (!key) return cb(new Error('must specify a dat key'))
 
-  var serverConnected = false
   var stream = network.connect(self.serverKey)
-
   stream.once('connect', function (err) {
     if (err) return cb(err)
     debug('writing key', key)

@@ -12,8 +12,8 @@ if (args.debug) {
 
 var DEFAULT_SERVER = 'dat-ping'
 
-if (args.server) return runServer()
-else if (args._[0]) return runPing()
+if (args.server) runServer()
+else if (args._[0]) runPing()
 else {
   console.error('Usage: dat-ping <dat-key>')
   process.exit(1)
@@ -32,4 +32,7 @@ function runPing () {
 function runServer () {
   var pingServer = require('./server')()
   pingServer.start(DEFAULT_SERVER)
+  pingServer.on('error', function (err) {
+    console.error(err)
+  })
 }

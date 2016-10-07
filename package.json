@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "standard && tape test/*.js | tap-spec"
+    "test": "standard"
   },
   "bin": {
     "dat-ping": "cli.js"

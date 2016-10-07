@@ -1,6 +1,5 @@
 var events = require('events')
 var util = require('util')
-var pump = require('pump')
 var peerNetwork = require('peer-network')
 var hyperdrive = require('hyperdrive')
 var swarm = require('hyperdrive-archive-swarm')
@@ -44,6 +43,7 @@ PingServer.prototype.start = function (key) {
         debug('new swarm connection')
       })
       archive.list({}, function (err, entries) {
+        if (err) return self.emit('error', err)
         outData.entries = entries.length
         debug('Sending results for', datKey.toString('hex'))
         stream.write(JSON.stringify(outData))
@@ -59,9 +59,11 @@ PingServer.prototype.start = function (key) {
 
     function readKey (cb) {
       var datKey = stream.read(32)
-      if (!datKey) return stream.once('readable', function () {
-        readKey(cb)
-      })
+      if (!datKey) {
+        return stream.once('readable', function () {
+          readKey(cb)
+        })
+      }
       datKey = encoding.encode(datKey)
       debug('received ping key', datKey.toString('hex'))
       cb(null, datKey)
