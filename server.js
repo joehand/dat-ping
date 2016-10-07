@@ -9,6 +9,12 @@ var debug = require('debug')('dat-ping')
 
 module.exports = PingServer
 
+try {
+  var webrtc = require('electron-webrtc')()
+} catch (e) {
+  var webrtc = false
+}
+
 function PingServer () {
   if (!(this instanceof PingServer)) return new PingServer()
   var self = this
@@ -37,8 +43,8 @@ PingServer.prototype.start = function (key) {
       if (err) return self.emit('error', err)
 
       var drive = hyperdrive(memdb())
-      var archive = drive.createArchive(key, {sparse: true})
-      var sw = swarm(archive, {upload: false})
+      var archive = drive.createArchive(datKey, {sparse: true})
+      var sw = swarm(archive, {upload: false, wrtc: webrtc})
       sw.on('connection', function (peer) {
         debug('new swarm connection')
       })
