@@ -10,7 +10,7 @@ function DatPing (opts) {
   if (!(this instanceof DatPing)) return new DatPing(opts)
   events.EventEmitter.call(this)
   this.serverKey = opts.server
-  this.timeout = opts.timeout || 5000
+  this.timeout = opts.timeout || 10000
 }
 
 util.inherits(DatPing, events.EventEmitter)
@@ -33,12 +33,15 @@ DatPing.prototype.ping = function (key, cb) {
       .on('data', function (data) {
         if (data.type === 'received') {
           clearTimeout(timeout)
-          timeout = setTimeout(timeoutEvent, self.timeout)
           timeoutType = 'dat-swarm'
+          timeout = setTimeout(timeoutEvent, self.timeout)
         } else if (data.type === 'connection') {
           timeoutType = null
           clearTimeout(timeout)
-        } else if (data.type === 'results') self.emit('response', data.payload)
+        } else if (data.type === 'results') {
+          clearTimeout(timeout)
+          self.emit('response', data.payload)
+        }
       })
 
     function timeoutEvent () {
